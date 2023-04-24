@@ -1,0 +1,47 @@
+import photos
+import io
+import numpy as np
+from PIL import Image
+import matplotlib.pyplot as plt
+
+list = []
+
+# Take a photo using the camera
+img = photos.capture_image()
+
+# Convert the image to a PIL Image object
+buf = io.BytesIO()
+img.save(buf, format='JPEG')
+buf.seek(0)
+img = Image.open(buf)
+
+# Resize the image to a smaller size
+img = img.resize((125,50))
+
+# Convert the image to a numpy array
+img_array = np.array(img)
+
+# Display the image using matplotlib
+plt.imshow(img_array)
+plt.show()
+
+# Convert the image to grayscale
+img = img.convert('L')
+
+# Define the ASCII characters to use for the conversion
+ascii_chars = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@']
+
+# Convert the image to ASCII art
+ascii_art = ''
+for y in range(img.size[1]):
+    for x in range(img.size[0]):
+        try:
+            pixel = img.getpixel((x, y))
+            char = ascii_chars[int(pixel / 25.5)]
+            ascii_art += char
+        except IndexError:
+            continue
+    if ascii_art != '':
+        print(ascii_art)
+        list.append(ascii_art)
+    ascii_art = ''
